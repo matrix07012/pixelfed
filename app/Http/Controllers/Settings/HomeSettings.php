@@ -32,9 +32,8 @@ trait HomeSettings
 		$storage['percentUsed'] = ceil($storage['used'] / $storage['limit'] * 100);
 		$storage['limitPretty'] = PrettyNumber::size($storage['limit']);
 		$storage['usedPretty'] = PrettyNumber::size($storage['used']);
-		$pronouns = PronounService::get($id);
 
-		return view('settings.home', compact('storage', 'pronouns'));
+		return view('settings.home', compact('storage'));
 	}
 
 	public function homeUpdate(Request $request)
@@ -43,8 +42,7 @@ trait HomeSettings
 			'name'    => 'required|string|max:'.config('pixelfed.max_name_length'),
 			'bio'     => 'nullable|string|max:'.config('pixelfed.max_bio_length'),
 			'website' => 'nullable|url',
-			'language' => 'nullable|string|min:2|max:5',
-			'pronouns' => 'nullable|array|max:4'
+			'language' => 'nullable|string|min:2|max:5'
 		]);
 
 		$changes = false;
@@ -54,8 +52,6 @@ trait HomeSettings
 		$language = $request->input('language');
 		$user = Auth::user();
 		$profile = $user->profile;
-		$pronouns = $request->input('pronouns');
-		$existingPronouns = PronounService::get($profile->id);
 		$layout = $request->input('profile_layout');
 		if($layout) {
 			$layout = !in_array($layout, ['metro', 'moment']) ? 'metro' : $layout;
@@ -87,14 +83,6 @@ trait HomeSettings
 				$changes = true;
 				$user->language = $language;
 				session()->put('locale', $language);
-			}
-
-			if($existingPronouns != $pronouns) {
-				if($pronouns && in_array('Select Pronoun(s)', $pronouns)) {
-					PronounService::clear($profile->id);
-				} else {
-					PronounService::put($profile->id, $pronouns);
-				}
 			}
 		}
 

@@ -142,7 +142,6 @@
 									</div>
 									<p class="d-flex align-items-center mb-1">
 										<span class="font-weight-bold mr-1">{{profile.display_name}}</span>
-										<span v-if="profile.pronouns" class="text-muted small">{{profile.pronouns.join('/')}}</span>
 									</p>
 									<p v-if="profile.note" class="mb-0" v-html="profile.note"></p>
 									<p v-if="profile.website"><a :href="profile.website" class="profile-website small" rel="me external nofollow noopener" target="_blank" @click.prevent="remoteRedirect(profile.website)">{{formatWebsite(profile.website)}}</a></p>
