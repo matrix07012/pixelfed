@@ -3,7 +3,7 @@
 return [
 
 	'common' => [
-		'comment' => 'Comment',
+		'comment' => 'Comentar',
 		'commented' => 'Commented',
 		'comments' => 'Comments',
 		'like' => 'Like',
@@ -14,7 +14,7 @@ return [
 		'shares' => 'Shares',
 		'unshare' => 'Unshare',
 
-		'cancel' => 'Cancel',
+		'cancel' => 'Anullar',
 		'copyLink' => 'Copy Link',
 		'delete' => 'Delete',
 		'error' => 'Error',
@@ -116,6 +116,9 @@ return [
 		'editProfile' => 'Edit Profile',
 		'followRequested' => 'Follow Requested',
 		'joined' => 'Joined',
+
+		'emptyCollections' => 'We can\'t seem to find any collections',
+		'emptyPosts' => 'We can\'t seem to find any posts',
 	],
 
 	'menu' => [
@@ -173,6 +176,10 @@ return [
 
 	'timeline' => [
 		'peopleYouMayKnow' => 'People you may know'
-	]
+	],
+
+	'hashtags' => [
+		'emptyFeed' => 'We can\'t seem to find any posts for this hashtag'
+	],
 
 ];

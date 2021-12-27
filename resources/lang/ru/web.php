@@ -91,7 +91,7 @@ return [
 		'applicationApproved' => 'было одобрено!',
 		'applicationRejected' => 'было отклонено. Вы можете повторно подать заявку на регистрацию в течение 6 месяцев.',
 
-		'dm' => 'dm',
+		'dm' => 'сообщение',
 		'groupPost' => 'сообщения группы',
 		'modlog' => 'modlog',
 		'post' => 'пост',
@@ -116,6 +116,9 @@ return [
 		'editProfile' => 'Редактировать профиль',
 		'followRequested' => 'Хочет на Вас подписаться',
 		'joined' => 'Регистрация',
+
+		'emptyCollections' => 'We can\'t seem to find any collections',
+		'emptyPosts' => 'We can\'t seem to find any posts',
 	],
 
 	'menu' => [
@@ -173,6 +176,10 @@ return [
 
 	'timeline' => [
 		'peopleYouMayKnow' => 'Возможные друзья'
-	]
+	],
+
+	'hashtags' => [
+		'emptyFeed' => 'We can\'t seem to find any posts for this hashtag'
+	],
 
 ];

@@ -3,98 +3,98 @@
 return [
 
 	'common' => [
-		'comment' => 'Bình luận',
-		'commented' => 'Đã bình luận',
-		'comments' => 'Bình luận',
-		'like' => 'Thích',
-		'liked' => 'Đã thích',
-		'likes' => 'Lượt thích',
-		'share' => 'Chia sẻ',
-		'shared' => 'Đã chia sẻ',
-		'shares' => 'Lượt chia sẻ',
-		'unshare' => 'Hủy chia sẻ',
+		'comment' => 'Komentovať',
+		'commented' => 'Commented',
+		'comments' => 'Komentáre',
+		'like' => 'Like',
+		'liked' => 'Páči sa mi',
+		'likes' => 'Likes',
+		'share' => 'Zdielať',
+		'shared' => 'Zdieľané',
+		'shares' => 'Zdiaľané',
+		'unshare' => 'Zrušiť zdieľanie',
 
-		'cancel' => 'Hủy',
-		'copyLink' => 'Chép link',
-		'delete' => 'Xóa',
-		'error' => 'Lỗi',
-		'errorMsg' => 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
-		'oops' => 'Rất tiếc!',
-		'other' => 'Khác',
-		'readMore' => 'Xem thêm',
-		'success' => 'Hoàn tất',
+		'cancel' => 'Zrušiť',
+		'copyLink' => 'Skopírovať odkaz',
+		'delete' => 'Vymazať',
+		'error' => 'Chyba',
+		'errorMsg' => 'Niečo sa pokazilo. Prosím, skúste to znova neskôr.',
+		'oops' => 'Ups!',
+		'other' => 'Iné',
+		'readMore' => 'Zobraziť viac',
+		'success' => 'Hotovo',
 
-		'sensitive' => 'Nhạy cảm',
-		'sensitiveContent' => 'Nội dung nhạy cảm',
-		'sensitiveContentWarning' => 'Ảnh này có thể chứa nội dung nhạy cảm',
+		'sensitive' => 'Citlivý',
+		'sensitiveContent' => 'Citlivý obsah',
+		'sensitiveContentWarning' => 'Tento príspevok môže obsahovať citlivý obsah',
 	],
 
 	'site' => [
-		'terms' => 'Điều khoản sử dụng',
-		'privacy' => 'Chính sách bảo mật',
+		'terms' => 'Podmienky používania',
+		'privacy' => 'Zásady ochrany osobných údajov',
 	],
 
 	'navmenu' => [
-		'search' => 'Tìm kiếm',
-		'admin' => 'Trang quản trị',
+		'search' => 'Hľadať',
+		'admin' => 'Panel správcu',
 
 		// Timelines
-		'homeFeed' => 'Trang chính',
-		'localFeed' => 'Máy chủ',
-		'globalFeed' => 'Liên hợp',
+		'homeFeed' => 'Domovský kanál',
+		'localFeed' => 'Miestny kanál',
+		'globalFeed' => 'Globálny kanál',
 
 		// Core features
-		'discover' => 'Khám phá',
-		'directMessages' => 'Nhắn riêng',
-		'notifications' => 'Thông báo',
-		'groups' => 'Nhóm',
-		'stories' => 'Khoảnh khắc',
+		'discover' => 'Objavte',
+		'directMessages' => 'Priame Správy',
+		'notifications' => 'Notifikácie',
+		'groups' => 'Skupiny',
+		'stories' => 'Stories',
 
 		// Self links
-		'profile' => 'Trang cá nhân',
-		'drive' => 'Lưu trữ',
-		'settings' => 'Thiết lập',
-		'compose' => 'Ảnh mới',
+		'profile' => 'Profil',
+		'drive' => 'Úložisko',
+		'settings' => 'Nastavenia',
+		'compose' => 'Vytvoriť nový',
 
 		// Nav footer
-		'about' => 'Giới thiệu',
-		'help' => 'Trợ giúp',
-		'language' => 'Ngôn ngữ',
-		'privacy' => 'Bảo mật',
-		'terms' => 'Quy tắc',
+		'about' => 'O aplikácii',
+		'help' => 'Pomocník',
+		'language' => 'Jazyk',
+		'privacy' => 'Ochrana osobných údajov',
+		'terms' => 'Podmienky',
 
 		// Temporary links
-		'backToPreviousDesign' => 'Dùng giao diện cũ'
+		'backToPreviousDesign' => 'Vrátiť sa späť k predošlému dizajnu'
 	],
 
 	'directMessages' => [
-		'inbox' => 'Hộp thư',
-		'sent' => 'Đã gửi',
-		'requests' => 'Yêu cầu'
+		'inbox' => 'Prijaté',
+		'sent' => 'Odoslané',
+		'requests' => 'Žiadosti'
 	],
 
 	'notifications' => [
-		'liked' => 'đã thích ảnh',
-		'commented' => 'bình luận về ảnh',
-		'reacted' => 'xem ảnh',
-		'shared' => 'shared your',
-		'tagged' => 'tagged you in a',
+		'liked' => 'sa páči váš',
+		'commented' => 'komentoval na vašom',
+		'reacted' => 'reagoval na váš',
+		'shared' => 'zdieľal váš',
+		'tagged' => 'označil vás v',
 
-		'updatedA' => 'updated a',
-		'sentA' => 'sent a',
+		'updatedA' => 'aktualizoval',
+		'sentA' => 'poslal',
 
-		'followed' => 'followed',
-		'mentioned' => 'mentioned',
-		'you' => 'you',
+		'followed' => 'začal sledovať',
+		'mentioned' => 'spomenul',
+		'you' => 'vy',
 
-		'yourApplication' => 'Your application to join',
-		'applicationApproved' => 'was approved!',
-		'applicationRejected' => 'was rejected. You can re-apply to join in 6 months.',
+		'yourApplication' => 'Vaša žiadosť o pripojenie',
+		'applicationApproved' => 'bola schválená!',
+		'applicationRejected' => 'bola odmietnutá. Môžete znova požiadať o pripojenie za 6 mesiacov.',
 
 		'dm' => 'dm',
-		'groupPost' => 'group post',
+		'groupPost' => 'skupinový príspevok',
 		'modlog' => 'modlog',
-		'post' => 'post',
+		'post' => 'príspevok',
 		'story' => 'story',
 	],
 
