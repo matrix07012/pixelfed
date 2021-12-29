@@ -5,6 +5,13 @@
 ### Breaking
 - Dropped support for PHP 7.3 [#3041](https://github.com/pixelfed/pixelfed/pull/3041)
 
+### Metro 2.0 UI
+- Added UI Settings modal and fixed height media previews setting ([f2467e71](https://github.com/pixelfed/pixelfed/commit/f2467e71))
+- Set max-width of 1440px for larger screens ([af68872a](https://github.com/pixelfed/pixelfed/commit/af68872a))
+
+### Configuration
+- Enable network timeline by default ([b95aec12](https://github.com/pixelfed/pixelfed/commit/b95aec12))
+
 ### Added
 - Manual email verification requests. ([bc659387](https://github.com/pixelfed/pixelfed/commit/bc659387))
 - Added StatusMentionService, fixes #3026. ([e5387d67](https://github.com/pixelfed/pixelfed/commit/e5387d67))
@@ -63,6 +70,10 @@
 - Updated SPA, rewrite autolink urls to SPA when applicable. ([0837b410](https://github.com/pixelfed/pixelfed/commit/0837b410))
 - Updated site config, increase ttl and enable SPA by default. ([469d49d8](https://github.com/pixelfed/pixelfed/commit/469d49d8))
 - Updated Webfinger, fixes #3050. ([ff7ee3bd](https://github.com/pixelfed/pixelfed/commit/ff7ee3bd))
+- Updated status api, autolink caption before returning response. ([b00a453b](https://github.com/pixelfed/pixelfed/commit/b00a453b))
+- Updated Timeline, add new ui promo in timelines that can be hidden using localstorage. ([e13959ae](https://github.com/pixelfed/pixelfed/commit/e13959ae))
+- Updated FederationController, increase webfinger cache ttl from 12 hours to 14 days. ([745c3580](https://github.com/pixelfed/pixelfed/commit/745c3580))
+- Updated DiscoverController, add yearly option and increase limit from 15 to 30 posts. ([10b6058c](https://github.com/pixelfed/pixelfed/commit/10b6058c))
 -  ([](https://github.com/pixelfed/pixelfed/commit/))
 
 ## [v0.11.1 (2021-09-07)](https://github.com/pixelfed/pixelfed/compare/v0.11.0...v0.11.1)
