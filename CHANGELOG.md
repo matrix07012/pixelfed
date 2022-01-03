@@ -8,6 +8,7 @@
 ### Metro 2.0 UI
 - Added UI Settings modal and fixed height media previews setting ([f2467e71](https://github.com/pixelfed/pixelfed/commit/f2467e71))
 - Set max-width of 1440px for larger screens ([af68872a](https://github.com/pixelfed/pixelfed/commit/af68872a))
+- Add link to sidebar profile card ([85964510](https://github.com/pixelfed/pixelfed/commit/85964510))
 
 ### Configuration
 - Enable network timeline by default ([b95aec12](https://github.com/pixelfed/pixelfed/commit/b95aec12))
@@ -17,6 +18,7 @@
 - Added StatusMentionService, fixes #3026. ([e5387d67](https://github.com/pixelfed/pixelfed/commit/e5387d67))
 - Cloud Backups, a command to store backups on S3 or compatible filesystems. [#3037](https://github.com/pixelfed/pixelfed/pull/3037) ([3515a98e](https://github.com/pixelfed/pixelfed/commit/3515a98e))
 - Web UI Localizations + Crowdin integration. ([f7d9b40b](https://github.com/pixelfed/pixelfed/commit/f7d9b40b)) ([7ff120c9](https://github.com/pixelfed/pixelfed/commit/7ff120c9))
+- Store remote avatars locally if S3 not enabled. ([b4bd0400](https://github.com/pixelfed/pixelfed/commit/b4bd0400))
 
 ### Updated
 - Updated NotificationService, fix 500 bug. ([4a609dc3](https://github.com/pixelfed/pixelfed/commit/4a609dc3))
@@ -74,6 +76,10 @@
 - Updated Timeline, add new ui promo in timelines that can be hidden using localstorage. ([e13959ae](https://github.com/pixelfed/pixelfed/commit/e13959ae))
 - Updated FederationController, increase webfinger cache ttl from 12 hours to 14 days. ([745c3580](https://github.com/pixelfed/pixelfed/commit/745c3580))
 - Updated DiscoverController, add yearly option and increase limit from 15 to 30 posts. ([10b6058c](https://github.com/pixelfed/pixelfed/commit/10b6058c))
+- Updated RemoteAvatarFetch job, fixed bug preventing new avatars from being stored. ([92bc2845](https://github.com/pixelfed/pixelfed/commit/92bc2845))
+- Updated AccountService, fix json casting. ([e5f8f344](https://github.com/pixelfed/pixelfed/commit/e5f8f344))
+- Updated ApiV1Controller, fix illegal operator bug by setting default min_id. ([415826f2](https://github.com/pixelfed/pixelfed/commit/415826f2))
+- Updated StatusService, add getMastodon method for mastoapi compatibility. ([36a129fe](https://github.com/pixelfed/pixelfed/commit/36a129fe))
 -  ([](https://github.com/pixelfed/pixelfed/commit/))
 
 ## [v0.11.1 (2021-09-07)](https://github.com/pixelfed/pixelfed/compare/v0.11.0...v0.11.1)
