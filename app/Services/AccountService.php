@@ -5,6 +5,7 @@ namespace App\Services;
 use Cache;
 use App\Profile;
 use App\Status;
+use App\User;
 use App\UserSetting;
 use App\Transformer\Api\AccountTransformer;
 use League\Fractal;
@@ -31,6 +32,39 @@ class AccountService
 			$resource = new Fractal\Resource\Item($profile, new AccountTransformer());
 			return $fractal->createData($resource)->toArray();
 		});	
+	}
+
+	public static function getMastodon($id, $softFail = false)
+	{
+		$account = self::get($id, $softFail);
+		if(!$account) {
+			return null;
+		}
+
+		if(config('exp.emc') == false) {
+			return $account;
+		}
+
+		unset(
+			$account['header_bg'],
+			$account['is_admin'],
+			$account['last_fetched_at'],
+			$account['local'],
+			$account['location'],
+			$account['note_text'],
+			$account['pronouns'],
+			$account['website']
+		);
+
+		$account['avatar_static'] = $account['avatar'];
+		$account['bot'] = false;
+		$account['emojis'] = [];
+		$account['fields'] = [];
+		$account['header'] = url('/storage/headers/missing.png');
+		$account['header_static'] = url('/storage/headers/missing.png');
+		$account['last_status_at'] = null;
+
+		return $account;
 	}
 
 	public static function del($id)
@@ -139,6 +173,46 @@ class AccountService
 				return null;
 			}
 			return (string) $profile->id;
+		});
+	}
+
+	public static function hiddenFollowers($id)
+	{
+		$account = self::get($id, true);
+		if(!$account || !isset($account['local']) || $account['local'] == false) {
+			return false;
+		}
+
+		return Cache::remember('pf:acct:settings:hidden-followers:' . $id, 43200, function() use($id) {
+			$user = User::whereProfileId($id)->first();
+			if(!$user) {
+				return false;
+			}
+			$settings = UserSetting::whereUserId($user->id)->first();
+			if($settings) {
+				return $settings->show_profile_follower_count == false;
+			}
+			return false;
+		});
+	}
+
+	public static function hiddenFollowing($id)
+	{
+		$account = self::get($id, true);
+		if(!$account || !isset($account['local']) || $account['local'] == false) {
+			return false;
+		}
+
+		return Cache::remember('pf:acct:settings:hidden-following:' . $id, 43200, function() use($id) {
+			$user = User::whereProfileId($id)->first();
+			if(!$user) {
+				return false;
+			}
+			$settings = UserSetting::whereUserId($user->id)->first();
+			if($settings) {
+				return $settings->show_profile_following_count == false;
+			}
+			return false;
 		});
 	}
 }

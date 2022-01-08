@@ -46,6 +46,11 @@ class StatusService
 		if(!$status) {
 			return null;
 		}
+
+		if(config('exp.emc') == false) {
+			return $status;
+		}
+
 		$status['replies_count'] = $status['reply_count'];
 		unset(
 			$status['_v'],
@@ -63,6 +68,7 @@ class StatusService
 			$status['shortcode'],
 			$status['taggedPeople'],
 			$status['thread'],
+			$status['pinned'],
 			$status['account']['header_bg'],
 			$status['account']['is_admin'],
 			$status['account']['last_fetched_at'],
@@ -71,6 +77,7 @@ class StatusService
 			$status['account']['note_text'],
 			$status['account']['pronouns'],
 			$status['account']['website'],
+			$status['media_attachments'],
 		);
 		$status['account']['avatar_static'] = $status['account']['avatar'];
 		$status['account']['bot'] = false;
@@ -79,6 +86,10 @@ class StatusService
 		$status['account']['header'] = url('/storage/headers/missing.png');
 		$status['account']['header_static'] = url('/storage/headers/missing.png');
 		$status['account']['last_status_at'] = null;
+
+		$status['media_attachments'] = array_values(MediaService::getMastodon($status['id']));
+		$status['muted'] = false;
+		$status['reblogged'] = false;
 
 		return $status;
 	}
