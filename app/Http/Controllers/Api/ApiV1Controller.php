@@ -136,21 +136,20 @@ class ApiV1Controller extends Controller
 	 */
 	public function verifyCredentials(Request $request)
 	{
-		abort_if(!$request->user(), 403);
+		$user = $request->user();
 
-		abort_if($request->user()->status != null, 403);
-
-		$id = $request->user()->profile_id;
+		abort_if(!$user, 403);
+		abort_if($user->status != null, 403);
 
 		$res = AccountService::getMastodon($id);
 
-		// $res['source'] = [
-		// 	'privacy' => $res['locked'] ? 'private' : 'public',
-		// 	'sensitive' => false,
-		// 	'language' => null,
-		// 	'note' => '',
-		// 	'fields' => []
-		// ];
+		$res['source'] = [
+			'privacy' => $res['locked'] ? 'private' : 'public',
+			'sensitive' => false,
+			'language' => $user->language ?? 'en',
+			'note' => '',
+			'fields' => []
+		];
 
 		return response()->json($res);
 	}
@@ -457,7 +456,7 @@ class ApiV1Controller extends Controller
 	 */
 	public function accountFollowingById(Request $request, $id)
 	{
-	abort_if(!$request->user(), 403);
+		abort_if(!$request->user(), 403);
 		$account = AccountService::get($id);
 		abort_if(!$account, 404);
 		$pid = $request->user()->profile_id;
@@ -504,7 +503,6 @@ class ApiV1Controller extends Controller
 	 */
 	public function accountStatusesById(Request $request, $id)
 	{
-		abort_if(!$request->user(), 403);
 		$user = $request->user();
 
 		$this->validate($request, [
@@ -1039,8 +1037,8 @@ class ApiV1Controller extends Controller
 			LikePipeline::dispatch($like);
 		}
 
-		$resource = new Fractal\Resource\Item($status, new StatusTransformer());
-		$res = $this->fractal->createData($resource)->toArray();
+		$res = StatusService::getMastodon($status->id, false);
+		$res['favourited'] = true;
 		return response()->json($res);
 	}
 
@@ -1079,8 +1077,8 @@ class ApiV1Controller extends Controller
 
 		StatusService::del($status->id);
 
-		$resource = new Fractal\Resource\Item($status, new StatusTransformer());
-		$res = $this->fractal->createData($resource)->toArray();
+		$res = StatusService::getMastodon($status->id, false);
+		$res['favourited'] = false;
 		return response()->json($res);
 	}
 
@@ -1177,7 +1175,7 @@ class ApiV1Controller extends Controller
 	 */
 	public function instance(Request $request)
 	{
-		$res = Cache::remember('api:v1:instance-data-response', 900, function () {
+		$res = Cache::remember('api:v1:instance-data-response-v0', 1800, function () {
 			$contact = Cache::remember('api:v1:instance-data:contact', 604800, function () {
 				$admin = User::whereIsAdmin(true)->first();
 				return $admin && isset($admin->profile_id) ?
@@ -1212,7 +1210,7 @@ class ApiV1Controller extends Controller
 				'short_description' => 'Pixelfed is an image sharing platform, an ethical alternative to centralized platforms',
 				'description' => 'Pixelfed is an image sharing platform, an ethical alternative to centralized platforms',
 				'email' => config('instance.email'),
-				'version' => config('pixelfed.version'),
+				'version' => '2.7.2 (compatible; Pixelfed ' . config('pixelfed.version') .')',
 				'urls' => [],
 				'stats' => $stats,
 				'thumbnail' => url('headers/default.jpg'),
@@ -1596,8 +1594,6 @@ class ApiV1Controller extends Controller
 	 */
 	public function timelineHome(Request $request)
 	{
-		abort_if(!$request->user(), 403);
-
 		$this->validate($request,[
 		  'page'        => 'nullable|integer|max:40',
 		  'min_id'      => 'nullable|integer|min:0|max:' . PHP_INT_MAX,
@@ -1609,18 +1605,6 @@ class ApiV1Controller extends Controller
 		$min = $request->input('min_id');
 		$max = $request->input('max_id');
 		$limit = $request->input('limit') ?? 3;
-		$user = $request->user();
-
-		if($user->last_active_at) {
-			$key = 'user:last_active_at:id:'.$user->id;
-			$ttl = now()->addMinutes(5);
-			Cache::remember($key, $ttl, function() use($user) {
-				$user->last_active_at = now();
-				$user->save();
-				return;
-			});
-		}
-
 		$pid = $request->user()->profile_id;
 
 		$following = Cache::remember('profile:following:'.$pid, now()->addMinutes(1440), function() use($pid) {
@@ -1631,63 +1615,68 @@ class ApiV1Controller extends Controller
 		if($min || $max) {
 			$dir = $min ? '>' : '<';
 			$id = $min ?? $max;
-			$timeline = Status::select(
-						'id',
-						'uri',
-						'caption',
-						'rendered',
-						'profile_id',
-						'type',
-						'in_reply_to_id',
-						'reblog_of_id',
-						'is_nsfw',
-						'scope',
-						'local',
-						'reply_count',
-						'likes_count',
-						'reblogs_count',
-						'comments_disabled',
-						'place_id',
-						'created_at',
-						'updated_at'
-					  )->whereIn('type', ['photo', 'photo:album', 'video', 'video:album'])
-					  ->with('profile', 'hashtags', 'mentions')
-					  ->where('id', $dir, $id)
-					  ->whereIn('profile_id', $following)
-					  ->whereIn('visibility',['public', 'unlisted', 'private'])
-					  ->latest()
-					  ->limit($limit)
-					  ->get();
+			$res = Status::select(
+				'id',
+				'profile_id',
+				'type',
+				'visibility',
+				'created_at'
+			)
+			->whereIn('type', ['photo', 'photo:album', 'video', 'video:album', 'photo:video:album'])
+			->where('id', $dir, $id)
+			->whereIn('profile_id', $following)
+			->whereIn('visibility',['public', 'unlisted', 'private'])
+			->latest()
+			->take($limit)
+			->get()
+			->map(function($s) use($pid) {
+				$status = StatusService::getMastodon($s['id']);
+				if(!$status || !isset($status['account']) || !isset($status['account']['id'])) {
+					return false;
+				}
+
+				if($pid) {
+					$status['favourited'] = (bool) LikeService::liked($pid, $s['id']);
+				}
+				return $status;
+			})
+			->filter(function($status) {
+				return $status && isset($status['account']);
+			})
+			->values()
+			->toArray();
 		} else {
-			$timeline = Status::select(
-						'id',
-						'uri',
-						'caption',
-						'rendered',
-						'profile_id',
-						'type',
-						'in_reply_to_id',
-						'reblog_of_id',
-						'is_nsfw',
-						'scope',
-						'local',
-						'reply_count',
-						'comments_disabled',
-						'likes_count',
-						'reblogs_count',
-						'place_id',
-						'created_at',
-						'updated_at'
-					  )->whereIn('type', ['photo', 'photo:album', 'video', 'video:album'])
-					  ->with('profile', 'hashtags', 'mentions')
-					  ->whereIn('profile_id', $following)
-					  ->whereIn('visibility',['public', 'unlisted', 'private'])
-					  ->latest()
-					  ->simplePaginate($limit);
+			$res = Status::select(
+				'id',
+				'profile_id',
+				'type',
+				'visibility',
+				'created_at'
+			)
+			->whereIn('type', ['photo', 'photo:album', 'video', 'video:album', 'photo:video:album'])
+			->whereIn('profile_id', $following)
+			->whereIn('visibility',['public', 'unlisted', 'private'])
+			->latest()
+			->take($limit)
+			->get()
+			->map(function($s) use($pid) {
+				$status = StatusService::getMastodon($s['id']);
+				if(!$status || !isset($status['account']) || !isset($status['account']['id'])) {
+					return false;
+				}
+
+				if($pid) {
+					$status['favourited'] = (bool) LikeService::liked($pid, $s['id']);
+				}
+				return $status;
+			})
+			->filter(function($status) {
+				return $status && isset($status['account']);
+			})
+			->values()
+			->toArray();
 		}
 
-		$fractal = new Fractal\Resource\Collection($timeline, new StatusTransformer());
-		$res = $this->fractal->createData($fractal)->toArray();
 		return response()->json($res);
 	}
 
@@ -1794,15 +1783,19 @@ class ApiV1Controller extends Controller
 		$res = collect($feed)
 		->map(function($k) use($user) {
 			$status = StatusService::getMastodon($k);
+			if(!$status || !isset($status['account']) || !isset($status['account']['id'])) {
+				return false;
+			}
+
 			if($user) {
 				$status['favourited'] = (bool) LikeService::liked($user->profile_id, $k);
-				$status['relationship'] = RelationshipService::get($user->profile_id, $status['account']['id']);
 			}
 			return $status;
 		})
 		->filter(function($s) use($filtered) {
-			return in_array($s['account']['id'], $filtered) == false;
+			return $s && isset($s['account']) && in_array($s['account']['id'], $filtered) == false;
 		})
+		->values()
 		->toArray();
 		return response()->json($res);
 	}
@@ -2212,7 +2205,7 @@ class ApiV1Controller extends Controller
 		abort_if(!$request->user(), 403);
 
 		$user = $request->user();
-		$status = Status::findOrFail($id);
+		$status = Status::whereScope('public')->findOrFail($id);
 
 		if($status->profile_id !== $user->profile_id) {
 			if($status->scope == 'private') {
@@ -2235,8 +2228,10 @@ class ApiV1Controller extends Controller
 		}
 
 		StatusService::del($status->id);
-		$resource = new Fractal\Resource\Item($status, new StatusTransformer());
-		$res = $this->fractal->createData($resource)->toArray();
+
+		$res = StatusService::getMastodon($status->id);
+		$res['reblogged'] = true;
+
 		return response()->json($res);
 	}
 
@@ -2252,7 +2247,7 @@ class ApiV1Controller extends Controller
 		abort_if(!$request->user(), 403);
 
 		$user = $request->user();
-		$status = Status::findOrFail($id);
+		$status = Status::whereScope('public')->findOrFail($id);
 
 		if($status->profile_id !== $user->profile_id) {
 			if($status->scope == 'private') {
@@ -2273,9 +2268,9 @@ class ApiV1Controller extends Controller
 		}
 
 		UndoSharePipeline::dispatch($reblog);
-		$resource = new Fractal\Resource\Item($status, new StatusTransformer());
-		$res = $this->fractal->createData($resource)->toArray();
-		$res['reblogged'] = false;
+
+		$res = StatusService::getMastodon($status->id);
+		$res['reblogged'] = true;
 		return response()->json($res);
 	}
 
