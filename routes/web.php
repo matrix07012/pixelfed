@@ -84,6 +84,12 @@ Route::domain(config('pixelfed.domain.admin'))->prefix('i/admin')->group(functio
 
 	Route::get('diagnostics/home', 'AdminController@diagnosticsHome')->name('admin.diagnostics');
 	Route::post('diagnostics/decrypt', 'AdminController@diagnosticsDecrypt')->name('admin.diagnostics.decrypt');
+	Route::get('custom-emoji/home', 'AdminController@customEmojiHome')->name('admin.custom-emoji');
+	Route::post('custom-emoji/toggle-active/{id}', 'AdminController@customEmojiToggleActive');
+	Route::get('custom-emoji/new', 'AdminController@customEmojiAdd');
+	Route::post('custom-emoji/new', 'AdminController@customEmojiStore');
+	Route::post('custom-emoji/delete/{id}', 'AdminController@customEmojiDelete');
+	Route::get('custom-emoji/duplicates/{id}', 'AdminController@customEmojiShowDuplicates');
 });
 
 Route::domain(config('pixelfed.domain.app'))->middleware(['validemail', 'twofactor', 'localization'])->group(function () {
@@ -510,7 +516,7 @@ Route::domain(config('pixelfed.domain.app'))->middleware(['validemail', 'twofact
 
 	Route::group(['prefix' => 'users'], function () {
 		Route::redirect('/', '/');
-		Route::get('{user}.atom', 'ProfileController@showAtomFeed');
+		Route::get('{user}.atom', 'ProfileController@showAtomFeed')->where('user', '.*');
 		Route::get('{username}/outbox', 'FederationController@userOutbox');
 		Route::get('{username}/followers', 'FederationController@userFollowers');
 		Route::get('{username}/following', 'FederationController@userFollowing');
