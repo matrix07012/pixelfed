@@ -31,6 +31,14 @@ class StatusController extends Controller
 {
 	public function show(Request $request, $username, $id)
 	{
+		// redirect authed users to Metro 2.0
+		if($request->user()) {
+			// unless they force static view
+			if(!$request->has('fs') || $request->input('fs') != '1') {
+				return redirect('/i/web/post/' . $id);
+			}
+		}
+
 		$user = Profile::whereNull('domain')->whereUsername($username)->firstOrFail();
 
 		if($user->status != null) {
@@ -254,6 +262,7 @@ class StatusController extends Controller
 			$share->profile_id = $profile->id;
 			$share->reblog_of_id = $status->id;
 			$share->in_reply_to_profile_id = $status->profile_id;
+			$share->type = 'share';
 			$share->save();
 			$count++;
 			SharePipeline::dispatch($share);
